@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Van心一言</title>
+<style type="text/css">
+body,td,th {
+	font-size: 18px;
+	color: #FFF;
+}
+body {
+	background-color: #039;
+	background-image: url(image/20150314112612488.jpg.source.jpg);
+	margin-left: 10mm;
+	margin-right: 10mm;
+	margin-top: 10mm;
+}
+a:link {
+	color: #0F0;
+}
+a {
+	font-size: 18px;
+}
+a:visited {
+	color: #096;
+}
+a:hover {
+	color: #0C0;
+}
+a:active {
+	color: #0C6;
+}
+</style>
+</head>
+
+<body>
+<p>
+  <tittle>
+  你好！
+</p>
+</p>
+<p>这是Van Chan的个人博客。 </p>
+<p>&nbsp;</p>
+<blockquote>
+  <p>1.短篇小说《坚歌》堂堂连载！<a href="jiange.html">点击查看</a></p>
+  <p>2<a href="liuyan.html">.留言板</a></p>
+  <p>3.我的<a href="https://space.bilibili.com/514380045?spm_id_from=333.337.0.0">bilibili主页</a></p>
+  <p>&nbsp;</p>
+</blockquote>
+</body>
+</html>

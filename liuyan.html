@@ -1,80 +1,335 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="zh-CN">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>留言</title>
-</head>
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-    }
-
-    #mgs {
-        width: 400px;
-        color: black;
-        font-style: italic;
-        border-width: 5px;
-        margin: 0 auto;
-    }
-
-    #text {
-        width: 400px;
-        height: 150px;
-        padding: 20px;
-        font-size: 20px;
-    }
-
-    li {
-        list-style: none;
-        border-bottom: 1px solid #999;
-        line-height: 20px;
-        margin-top: 30px;
-    }
-
-    span {
-        float: right;
-    }
-</style>
-
-<body>
-    <div id="mgs">
-        <textarea id="text"></textarea><br>
-        <input type="button" id="btn" value="提交">
-        <ul class="list"></ul>
-    </div>
-        <script>
-            var btn = document.getElementById('btn');
-            var list = document.querySelector('.list');
-            var text = document.getElementById('text');
-            btn.onclick = function () {
-                if (text.value == '') {
-                    alert('你没有输入内容。')
-                } else {
-                    var li = document.createElement('li');
-                     var time = new Date();
-                    var mytime = time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate();
-                    li.innerHTML = text.value + '<span>' + mytime + '\t' + '<button>删除</button></span>';
-                    text.value = '';
-                    list.insertBefore(li, list.children[0]);
-                    var allB = document.querySelectorAll('button');
-                    for (var i = 0; i < allB.length; i++) {
-                        allB[i].onclick = function () {
-                            list.removeChild(this.parentNode.parentNode);
-                        }
-                    }
-
-                }
+    <title>留言板</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            min-height: 600px;
+        }
+        
+        .messages-container {
+            flex: 3;
+            min-width: 300px;
+            background: #f8fafc;
+            padding: 30px;
+            max-height: 700px;
+            overflow-y: auto;
+        }
+        
+        .form-container {
+            flex: 2;
+            min-width: 300px;
+            background: white;
+            padding: 30px;
+            border-left: 1px solid #eee;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: #2c3e50;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #4b6cb7;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+            color: #4b6cb7;
+        }
+        
+        .message-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid #4b6cb7;
+        }
+        
+        .message-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .message-author {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+        }
+        
+        .message-author i {
+            margin-right: 8px;
+            color: #4b6cb7;
+        }
+        
+        .message-time {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+        
+        .message-content {
+            line-height: 1.6;
+            color: #34495e;
+            font-size: 1.1rem;
+        }
+        
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #4b6cb7;
+            box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.2);
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        button {
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(75, 108, 183, 0.4);
+        }
+        
+        button i {
+            margin-right: 10px;
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+            font-size: 1.2rem;
+        }
+        
+        .empty-message i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #bdc3c7;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8fafc;
+            color: #7f8c8d;
+            border-top: 1px solid #eee;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
             }
-        </script>
-</body>
+            
+            .form-container {
+                border-left: none;
+                border-top: 1px solid #eee;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-comments"></i> 留言板</h1>
+            <p class="subtitle">分享您的想法和建议</p>
+        </header>
+        
+        <div class="content">
+            <div class="messages-container">
+                <h2 class="section-title"><i class="fas fa-list"></i> 最新留言</h2>
+                <div id="messagesList">
+                    <!-- 留言将通过JavaScript动态生成 -->
+                </div>
+            </div>
+            
+            <div class="form-container">
+                <h2 class="section-title"><i class="fas fa-edit"></i> 发表留言</h2>
+                <form id="messageForm">
+                    <div class="form-group">
+                        <label for="author"><i class="fas fa-user"></i> 您的姓名</label>
+                        <input type="text" id="author" placeholder="请输入您的姓名" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message"><i class="fas fa-comment"></i> 留言内容</label>
+                        <textarea id="message" placeholder="请输入您的留言内容..." required></textarea>
+                    </div>
+                    
+                    <button type="submit"><i class="fas fa-paper-plane"></i> 提交留言</button>
+                </form>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© Van Chan留言板 | 所有留言将被保存到本地浏览器</p>
+        </footer>
+    </div>
 
-</html>
-
-
-————————————————
-本文由前端哥（www.qianduange.cn）分享
-原文地址：https://www.qianduange.cn/article/2402.html
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageForm = document.getElementById('messageForm');
+            const messagesList = document.getElementById('messagesList');
+            
+            // 初始化留言数据
+            let messages = JSON.parse(localStorage.getItem('messages')) || [];
+            
+            // 渲染留言列表
+            function renderMessages() {
+                if (messages.length === 0) {
+                    messagesList.innerHTML = `
+                        <div class="empty-message">
+                            <i class="far fa-comment-dots"></i>
+                            <p>暂无留言，成为第一个留言者吧！</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                messagesList.innerHTML = '';
+                messages.slice().reverse().forEach((message, index) => {
+                    const messageElement = document.createElement('div');
+                    messageElement.className = 'message-card';
+                    messageElement.innerHTML = `
+                        <div class="message-header">
+                            <div class="message-author"><i class="fas fa-user-circle"></i> ${message.author}</div>
+                            <div class="message-time">${message.time}</div>
+                        </div>
+                        <div class="message-content">${message.content}</div>
+                    `;
+                    messagesList.appendChild(messageElement);
+                });
+            }
+            
+            // 提交新留言
+            messageForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const author = document.getElementById('author').value;
+                const content = document.getElementById('message').value;
+                
+                if (!author.trim() || !content.trim()) {
+                    alert('请填写姓名和留言内容！');
+                    return;
+                }
+                
+                // 创建新留言
+                const newMessage = {
+                    author: author,
+                    content: content,
+                    time: new Date().toLocaleString('zh-CN')
+                };
+                
+                messages.push(newMessage);
+                localStorage.setItem('messages', JSON.stringify(messages));
+                
+                // 重置表单

@@ -100,6 +100,12 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             border-left: 4px solid #4b6cb7;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .message-card:hover {
@@ -189,6 +195,24 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(30deg);
+            transition: all 0.6s;
+        }
+        
+        button:hover::after {
+            transform: rotate(30deg) translate(20%, 20%);
         }
         
         button:hover {
@@ -235,6 +259,27 @@
                 font-size: 2.2rem;
             }
         }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            background: #4caf50;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.4s ease;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
     </style>
 </head>
 <body>
@@ -271,14 +316,17 @@
         </div>
         
         <footer>
-            <p>© Van Chan留言板 | 所有留言将被保存到本地浏览器</p>
+            <p>© 2023 留言板 | 所有留言将被保存到本地浏览器</p>
         </footer>
     </div>
+
+    <div class="notification" id="notification">留言已成功发布！</div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const messageForm = document.getElementById('messageForm');
             const messagesList = document.getElementById('messagesList');
+            const notification = document.getElementById('notification');
             
             // 初始化留言数据
             let messages = JSON.parse(localStorage.getItem('messages')) || [];
@@ -310,6 +358,14 @@
                 });
             }
             
+            // 显示通知
+            function showNotification() {
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 2000);
+            }
+            
             // 提交新留言
             messageForm.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -318,7 +374,9 @@
                 const content = document.getElementById('message').value;
                 
                 if (!author.trim() || !content.trim()) {
-                    alert('请填写姓名和留言内容！');
+                    notification.textContent = "请填写姓名和留言内容！";
+                    notification.style.background = "#f44336";
+                    showNotification();
                     return;
                 }
                 
@@ -333,3 +391,30 @@
                 localStorage.setItem('messages', JSON.stringify(messages));
                 
                 // 重置表单
+                messageForm.reset();
+                
+                // 重新渲染留言
+                renderMessages();
+                
+                // 显示成功通知
+                notification.textContent = "留言已成功发布！";
+                notification.style.background = "#4caf50";
+                showNotification();
+                
+                // 添加动画效果
+                const messageCards = document.querySelectorAll('.message-card');
+                if (messageCards.length > 0) {
+                    // 重置动画状态
+                    messageCards[0].style.animation = 'none';
+                    setTimeout(() => {
+                        messageCards[0].style.animation = 'fadeIn 0.5s ease-out';
+                    }, 10);
+                }
+            });
+            
+            // 初始渲染
+            renderMessages();
+        });
+    </script>
+</body>
+</html>
